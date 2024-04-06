@@ -1,6 +1,6 @@
 # MY Helix Editor config.
 
-## This uses the helix (fork)[https://github.com/mattwparas/helix] which supports plugins.
+## This uses the helix [fork](https://github.com/mattwparas/helix) which supports plugins.
 
 ## Info:
 - This fork uses the [steel programming language](https://github.com/mattwparas/steel) a scheme like programming language, very similar to elisp on emacs.
