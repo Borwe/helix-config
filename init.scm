@@ -1,6 +1,7 @@
 (require (prefix-in helix.static. "helix/static.scm"))
 (require (prefix-in helix. "helix/commands.scm"))
 (require (prefix-in helix.editor. "helix/editor.scm"))
+(require (prefix-in helix.misc. "helix/misc.scm"))
 (require-builtin "steel/process" as process.)
 
 (helix.theme "catppuccin_latte")
@@ -8,14 +9,14 @@
 (define wakatime-version "0.1.0")
 (define wakatime-agent "helix-wakatime")
 (define wakatime-time-key "")
-(define wakatime-exe "C:/Users/BRIAN/.wakatime/wakatime-cli.exe")
+(define wakatime-exe "/home/brian/.wakatime/wakatime-cli")
 
 (define (wakatime-get-current-file)
-         (Document-path(helix.editor.editor->get-document 
+         (Document-path (helix.editor.editor->get-document 
            (helix.editor.editor->doc-id 
              (helix.editor.editor-focus)))))
     
-(define (wakatime-write c)
+(define (wakatime-write cx)
   (let* ((doc (wakatime-get-current-file))
          (cmd (process.command wakatime-exe (list 
                 "--entity" doc
@@ -24,12 +25,23 @@
                "--write"
                 ))))
     
-    (if doc (process.spawn-process cmd) #f)
-    ))
+    (if doc (process.spawn-process cmd) ) ))
 
 (define (wakatime-listen-inserts )
   (register-hook! "post-insert-char" "wakatime-write"))
 (wakatime-listen-inserts)
 
+(define (wakatime-heart-beat)
+  (let ((doc (wakatime-get-current-file)))
+
+    (if doc (process.spawn-process (process.command wakatime-exe (list 
+                "--entity" doc
+                "--plugin" 
+                (string-append wakatime-agent "/" wakatime-version))))
+        (displayln "SASA?")))
+  (run-wakatime))
+
 (define (run-wakatime)
-  (displayln "LOL"))
+  (helix.misc.enqueue-thread-local-callback-with-delay 1000 wakatime-heart-beat ))
+
+(run-wakatime)
