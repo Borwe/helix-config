@@ -38,7 +38,7 @@
                 "--entity" doc
                 "--plugin" 
                 (string-append wakatime-agent "/" wakatime-version))))
-        (displayln "SASA?")))
+        #f))
   (run-wakatime))
 
 (define (run-wakatime)
