@@ -4,12 +4,13 @@
 (require (prefix-in helix.misc. "helix/misc.scm"))
 (require-builtin "steel/process" as process.)
 
-(helix.theme "catppuccin_latte")
+(helix.theme "catppuccin_macchiato")
+(helix.toggle-option "line-number" "relative")
 
 (define wakatime-version "0.1.0")
 (define wakatime-agent "helix-wakatime")
 (define wakatime-time-key "")
-(define wakatime-exe "/home/brian/.wakatime/wakatime-cli")
+(define wakatime-exe "C:\\Users\\Brian\\.wakatime\\wakatime-cli.exe")
 
 (define (wakatime-get-current-file)
          (Document-path (helix.editor.editor->get-document 
