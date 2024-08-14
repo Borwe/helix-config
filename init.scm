@@ -5,7 +5,7 @@
 (require-builtin "steel/process" as process.)
 
 (helix.theme "catppuccin_macchiato")
-(helix.toggle-option "line-number" "relative")
+(helix.set-option "line-number" "relative")
 
 (define wakatime-version "0.1.0")
 (define wakatime-agent "helix-wakatime")
