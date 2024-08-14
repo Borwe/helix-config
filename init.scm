@@ -10,7 +10,7 @@
 (define wakatime-version "0.1.0")
 (define wakatime-agent "helix-wakatime")
 (define wakatime-time-key "")
-(define wakatime-exe "C:\\Users\\Brian\\.wakatime\\wakatime-cli.exe")
+(define wakatime-exe "/home/brian/.wakatime/wakatime-cli")
 
 (define (wakatime-get-current-file)
          (Document-path (helix.editor.editor->get-document 
