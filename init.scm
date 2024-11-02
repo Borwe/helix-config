@@ -13,9 +13,12 @@
 (define wakatime-exe "/home/brian/.wakatime/wakatime-cli")
 
 (define (wakatime-get-current-file)
-         (Document-path (helix.editor.editor->get-document 
-           (helix.editor.editor->doc-id 
-             (helix.editor.editor-focus)))))
+   (helix.editor.editor-document->path 
+     (helix.editor.editor->doc-id
+       (helix.editor.editor-focus))))
+         ; (Document-path (helix.editor.editor->get-document 
+         ;   (helix.editor.editor->doc-id 
+         ;     (helix.editor.editor-focus)))))
     
 (define (wakatime-write cx)
   (let* ((doc (wakatime-get-current-file))
