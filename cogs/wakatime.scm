@@ -1,6 +1,7 @@
+(require (prefix-in helix.commands "helix/commands.scm"))
 (require (prefix-in helix.editor. "helix/editor.scm"))
 (require (prefix-in helix.misc. "helix/misc.scm"))
-(require-builtin "steel/process" as process.)
+(require-builtin steel/process)
 (require (prefix-in web. "steel-webrequests/webrequests.scm" ))
 
 (provide run-wakatime)
@@ -28,17 +29,14 @@
     (maybe-get-env-var "HOMEPATH")
    (maybe-get-env-var "HOME")))
 
-(define (exe-path home)
-  (string-append home "/.wakatime/wakatime-cli"))
+(define (exe-path)
+  (string-append (Ok->value (home-path-result)) "/.wakatime/wakatime-cli"))
 
 (define (check-if-downloaded)
-  (helix.misc.set-status! "LAMBA LOLO!!!!!!!!!!!!!!!!!")
-    (let ([home_dir_valid  (exe-path (Ok->value (home-path-result)))])
-      (displayln home_dir_valid)
-      ; (if (Ok? (path-exists? home_dir_valid))
-      ;     #t
-      ;     #f)
-      #f
+    (let ([home_dir_valid  (exe-path)])
+      (if (path-exists? home_dir_valid)
+            #t
+          #f)
   ))
 
 (define (get-or-create-wakatime-dir)
@@ -60,32 +58,32 @@
    )
  )
     
-; (define (wakatime-write cx)
-;   (let* ((doc (wakatime-get-current-file))
-;          (cmd (process.command "wakatime" (list 
-;                 "--entity" doc
-;                 "--plugin" 
-;                   (string-append wakatime-agent "/" wakatime-version)
-;                "--write"
-;                 ))))
-    
-;     (if doc (process.spawn-process cmd) ) ))
+(define (wakatime-write cx)
+  (let* ([doc (wakatime-get-current-file)]
+         [cmd (command (exe-path) (list 
+                "--entity" doc
+                "--plugin" 
+                  (string-append wakatime-agent "/" wakatime-version)
+               "--write"
+                ))])
+  
+    (if doc (spawn-process cmd) ) ))
 
 (define (wakatime-listen-inserts )
   (register-hook! "post-insert-char" "wakatime-write"))
-(wakatime-listen-inserts)
 
-; (define (wakatime-heart-beat)
-;   (let ((doc (wakatime-get-current-file)))
 
-;     (if doc (process.spawn-process (process.command wakatime-exe (list 
-;                 "--entity" doc
-;                 "--plugin" 
-;                 (string-append wakatime-agent "/" wakatime-version))))
-;         #f))
-;   (run-wakatime))
+(define (wakatime-heart-beat)
+  (let ((doc (wakatime-get-current-file)))
+    (if doc (spawn-process (command (exe-path) (list 
+                "--entity" doc
+                "--plugin" 
+                (string-append wakatime-agent "/" wakatime-version))))
+        #f))
+  (run-wakatime))
 
 (define (run-wakatime)
   (when (not (check-if-downloaded))
-        (helix.misc.set-status! (download-and-extract))))
-  ;(helix.misc.enqueue-thread-local-callback-with-delay 1000 wakatime-heart-beat ))
+        (helix.echo (download-and-extract)))
+  (wakatime-listen-inserts)
+  (helix.misc.enqueue-thread-local-callback-with-delay 1000 wakatime-heart-beat ))
