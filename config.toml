@@ -1,0 +1,6 @@
+
+[editor.statusline]
+left = ["mode", "spinner","version-control", "separator", "file-name"]
+center = []
+right = ["workspace-diagnostics", "selections", "position", "file-encoding", "file-line-ending", "file-type", "position-percentage"]
+separator = "│"
