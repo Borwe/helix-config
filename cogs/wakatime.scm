@@ -2,7 +2,7 @@
 (require (prefix-in helix.editor. "helix/editor.scm"))
 (require (prefix-in helix.misc. "helix/misc.scm"))
 (require-builtin steel/process)
-(require (prefix-in web. "steel-webrequests/webrequests.scm" ))
+;(require (prefix-in web. "steel-webrequests/webrequests.scm" ))
 
 (provide run-wakatime)
 
@@ -25,12 +25,12 @@
          (string-append waka-base-url "/wakatime-cli-darwin-amd64.zip"))))
 
 (define (home-path-result)
-  (if (eq? (current-os!) "windows")
-    (maybe-get-env-var "HOMEPATH")
-   (maybe-get-env-var "HOME")))
+  (if (string=? (current-os!) "windows")
+    (env-var "HOMEPATH")
+   (env-var "HOME")))
 
 (define (exe-path)
-  (string-append (Ok->value (home-path-result)) "/.wakatime/wakatime-cli"))
+  (string-append (home-path-result) "/.wakatime/wakatime-cli"))
 
 (define (check-if-downloaded)
     (let ([home_dir_valid  (exe-path)])
@@ -45,18 +45,18 @@
     (string-append home-dir "/.wakatime")
     ))
 
-(define (download-and-extract)
- (let* ([req (web.get (get-download-url))]
-        [resp (web.call req)]
-        [result (web.response->text resp)]
-        [file-zip (open-output-file (string-append (get-or-create-wakatime-dir) "/wakatime.zip"))]
-        )
-   (write-bytes (string->bytes result) file-zip)
-   (flush-output-port file-zip)
-   (close-output-port file-zip)
-     result
-   )
- )
+;(define (download-and-extract)
+; (let* ([req (web.get (get-download-url))]
+;        [resp (web.call req)]
+;        [result (web.response->text resp)]
+;        [file-zip (open-output-file (string-append (get-or-create-wakatime-dir) "/wakatime.zip"))]
+;        )
+;   (write-bytes (string->bytes result) file-zip)
+;   (flush-output-port file-zip)
+;   (close-output-port file-zip)
+;     result
+;   )
+; )
     
 (define (wakatime-write cx)
   (let* ([doc (wakatime-get-current-file)]
@@ -83,7 +83,7 @@
   (run-wakatime))
 
 (define (run-wakatime)
-  (when (not (check-if-downloaded))
-        (helix.echo (download-and-extract)))
+  ;(when (not (check-if-downloaded))
+        ;(helix.echo (download-and-extract)))
   (wakatime-listen-inserts)
   (helix.misc.enqueue-thread-local-callback-with-delay 1000 wakatime-heart-beat ))
